@@ -12,6 +12,8 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.17.1",
-    "jest-openapi": "^0.14.1"
+    "jest-openapi": "^0.14.1",
+    "dotenv": "^16.0.0",
+    "node-fetch": "^3.2.3"
   }
 }

@@ -1,26 +1,31 @@
 // File responsibilities
-// 1 - Configure the server
+// 1 - Include the API modules that configure the server, and provide them its dependencies
 // 2 - Launch the server and wait for requests
 
 import express from 'express'
+
+// Create and initialize the Express application
 const app = express()
 const PORT = 1984
-import komerApi from './komer-web-api.mjs'
+
+// Import komerApi and all its direct and indirect dependencies
+//import komerDataInit and spoonacularDataInit
+import komerDataInit from './komer-data_mem.mjs'
+const komerData = komerDataInit()
+import spoonacularDataInit from './spoonacular-data.mjs'
+const spoonacularData = spoonacularDataInit()
+
+import servicesInit from './komer-services.mjs'
+const services = servicesInit(komerData,spoonacularData)
+
+// games-api returns router
+import komerApiInit from './komer-web-api.mjs'
+const komerApi = komerApiInit(services)
+
+
 app.use(express.json())
+app.use(komerApi)
 
-
-
-// Configure CRUD routes to manage jokes 
-app.get('/api/komer/recipes', komerApi.getPopularRecipes)           // Get the list of the most popular recipes
-app.get('/api/komer/recipes/:id', komerApi.searchRecipes)           // Search recipes by words contained on its name
-app.post('/api/komer/groups', komerApi.createGroup)                 // Create group providing its name and description
-app.put('/api/komer/groups/:id', komerApi.updateGroup)              // Edit group by changing its name and description
-app.get('/api/komer/groups', komerApi.getGroups)                    // List all groups
-app.delete('/api/komer/groups/:id', komerApi.deleteGroup)           // Delete a group
-app.get('/api/komer/groups/:id', komerApi.getDetailsFromGroup)      // Get the details of a group, with its name, description and names of the included recipes
-app.post('/api/komer/groups/:id', komerApi.createRecipe)            // Add a recipe to a group
-app.delete('/api/komer/groups/:id/:recipe', komerApi.deleteRecipe)      // Remove a recipe from a group
-app.post('/api/komer/users', komerApi.createUser)                   // Create new user
 
 app.listen(PORT, () => console.log(`Example app listening at http://localhost:${PORT}`))
 
