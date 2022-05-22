@@ -1,16 +1,16 @@
 openapi: 3.0.1
 info:
-  title: Komer Web-API
-  description: This is komer web-api
+  title: Komer API
+  description: This is the komer API
   contact:
-    email: you@your-company.com
+    email: you@ykomer.com
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   version: 1.0.0
 servers:
   - description: Localhost server for testing API
-    url: http://localhost:1904/web-api
+    url: http://localhost:1984/api
 
 tags:
 - name: groups
@@ -23,19 +23,14 @@ paths:
       tags:
       - users
       summary: creates a new user
-      description: creates a new user to the system
+      description: creates a new user in the system
       operationId: createUser
-      parameters: 
-        - name: name
-        required: true
-        schema:
-          type: string
       requestBody:
         description: User to create
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateUser'
+              $ref: '#/components/schemas/User'
         required: false
       responses:
         201:
@@ -59,7 +54,7 @@ paths:
       tags:
       - groups
       summary: lists all groups
-      description: lists all groups
+      description: lists all groups that belong to the user who mades the request
       operationId: getGroups
       security:
         - bearerAuth: []
@@ -78,7 +73,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Groups'
+                  $ref: '#/components/schemas/Group'
         400:
           description: bad input parameter
           content: 
@@ -89,7 +84,7 @@ paths:
       tags:
       - groups
       summary: creates a group
-      description: creates a group
+      description: creates a group and associates the group to the user who made the request
       operationId: createGroup
       security:
         - bearerAuth: []
@@ -99,25 +94,13 @@ paths:
         required: true
         schema:
           type: string
-          format: uuid
-      - name: name
-        in: query
-        description: name of the group
-        required: true
-        schema:
-          type: string
-      - name: desc
-        in: query
-        description: description of the group
-        required: false
-        schema:
-          type: string
+          format: uuid    
       requestBody:
         description: creates a group
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Groups'
+              $ref: '#/components/schemas/NewGroup'
         required: false
       responses:
         201:
@@ -126,8 +109,8 @@ paths:
         400:
           description: Invalid input, object invalid
           content: {}
-      x-codegen-request-body-name: groups
-  /groups/{groupId}:
+      x-codegen-request-body-name: group
+  /groups/{id}:
     get:
       tags:
       - groups
@@ -155,7 +138,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Groups'
+                $ref: '#/components/schemas/Group'
         400:
           description: Invalid ID supplied
           content: 
@@ -164,12 +147,11 @@ paths:
                 type: string
                 example: Invalid ID supplied
         404:
-          description: Group not found
+          description: bad input parameter
           content: 
             application/json:
               schema: 
-                $ref: '#/components/schemas/InvalidRequest'
-                example: Group Not found
+                $ref: '#/components/schemas/InvalidRequest'              
     put:
       tags:
       - groups
@@ -187,32 +169,20 @@ paths:
           format: uuid
       - name: id
         in: path
-        description: ID of the group to be edited
+        description: ID of the group to be update
         required: true
         schema:
           type: integer
-      - name: name
-        in: query
-        description: name of the group
-        required: true
-        schema:
-          type: string
-      - name: desc
-        in: query
-        description: description of the group
-        required: false
-        schema:
-          type: string
       requestBody:
-        description: Group to edit
+        description: Group to update
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Groups'
+              $ref: '#/components/schemas/Group'
         required: false
       responses:
         201:
-          description: group edited
+          description: group updated
           content: {}
         404:
           description: group not found
@@ -245,8 +215,7 @@ paths:
         404:
           description: Group not found
           content: {}
-
-  /groups/{groupId}/recipes:
+  /groups/{id}/{recipe}:
     post:
       tags:
       - groups
@@ -269,12 +238,12 @@ paths:
         required: true
         schema:
           type: integer
-      - name: name
-        in: query
-        description: name of the group
+      - name: recipe
+        in: path
+        description: id of the recipe
         required: true
         schema:
-          type: string  
+          type: integer  
       responses:
         400:
           description: Invalid ID supplied
@@ -282,13 +251,11 @@ paths:
         404:
           description: Group not found
           content: {}
-
-  /groups/{groupId}/recipes/{recipeName}:
     delete:
       tags:
         - groups
-      summary: deletes a recipe (given its name) of a group given its id
-      description: deletes a recipe (given its name) of a group given its id
+      summary: deletes a recipe of a group 
+      description: deletes a recipe (given its id) of a group 
       operationId: deleteRecipe
       security:
         - bearerAuth: []
@@ -305,9 +272,9 @@ paths:
         required: true
         schema:
           type: integer
-      - name: name
-        in: query
-        description: name of the group
+      - name: recipe
+        in: path
+        description: id of the recipe
         required: true
         schema:
           type: string
@@ -318,107 +285,110 @@ paths:
         404:
           description: Group not found
           content: {}
-
-  /popular:
+  /recipes/popular:
     get:
       tags:
         - popular
       summary: Gets popular recipes from spoonnacular 
       description: Gets popular recipes from spoonnacular 
       operationId: getPopularRecipes
-      security:
-        - bearerAuth: []
-
-  /search/{recipeName}:
+      responses:
+        200:
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Recipe'
+  /recipes/search:
     get:
       tags:
-        - searched
-      summary: Gets a recipe with the given name
-      description: Gets a recipe with the given name
+        - search
+      summary: Gets recipes with a given name
+      description: Gets recipes by words contained on its name
       operationId: searchRecipes
-      security:
-        - bearerAuth: []
-      parameters:
-      - name: name
-        in: query
-        description: name of the group
-        required: true
-        schema:
-          type: string
       responses:
-        400:
-          description: Invalid name supplied
-          content: {}
-        404:
-          description: recipe not found
-          content: {}
-
-
+        200:
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Recipe'
 components:
   securitySchemes:
     bearerAuth:            # arbitrary name for the security scheme
       type: http
       scheme: bearer
   schemas:
-    CreateUser: 
+    User: 
       required:
         - name
       type: object
       properties:
-        id: 
-          type: integer
-          example: 1
         name: 
           type: string
-          example: john
-        authToken:
-          type: string
-          example: 3232-33232-43434-4343434
-    Groups:
+          example: user3
+    Group:
       required:
-      - token
       - id
       - name
+      - description
+      - recipes
+      - ownerUser
       type: object
       properties:
-        token:
-          type: string
-          format: uuid
         id:
           type: integer
           example: 1
         name:
           type: string
-          example: fifa
+          example: group3
         description:
           type: string
-          example: Fifa game description
+          example: group3 description3
+        recipes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Recipe'
+        ownerUser:
+          type: integer
+          example: 1
+    Recipe:
+      required:
+      - id
+      - name
+      - description
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: recipe1
+        description:
+          type: string
+          example: recipe1 description1
     NewGroup: 
       required:
       - name
+      - description
+      - recipes
+      type: object
       properties:
-        token:
-          type: string
-          format: uuid
-        id:
-          type: integer
-          example: 1
         name:
           type: string
-          example: fifa
+          example: group3
         description:
           type: string
-          example: Fifa game description
-    NewRecipe:
-      required:
-      - recipeId
-      properties:
-        token:
-          type: string
-          format: uuid
-        id:
-          type: integer
-          example: 1
+          example: group3 description3
+        recipes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Recipe'
     InvalidRequest:
       type: object
       properties:

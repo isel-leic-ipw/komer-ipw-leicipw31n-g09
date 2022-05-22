@@ -71,11 +71,11 @@ export default function(komerData,spoonacularData)  {
         return komerData.getDetailsFromGroup(id)
     }
 
-    async function createGroup(userToken, name, description){
+    async function createGroup(userToken, name, description,recipes){
         if(!name) 
             throw errors.INVALID_ARGUMENT("name")
         const user = await komerData.getUserByToken(userToken)
-        const newGroup = { name : name, description: description, ownerUser: user.id  }
+        const newGroup = { name : name, description: description, recipes: recipes, ownerUser: user.id  }
         return komerData.createGroup(newGroup)
     }
 

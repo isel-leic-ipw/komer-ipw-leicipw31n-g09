@@ -232,14 +232,15 @@
 							}
 						},
 						"url": {
-							"raw": "{{port}}/api/komer/popular_recipes",
+							"raw": "{{port}}/api/komer/recipes/popular",
 							"host": [
 								"{{port}}"
 							],
 							"path": [
 								"api",
 								"komer",
-								"popular_recipes"
+								"recipes",
+								"popular"
 							]
 						}
 					},
@@ -263,14 +264,15 @@
 							}
 						},
 						"url": {
-							"raw": "{{port}}/api/komer/search_recipes",
+							"raw": "{{port}}/api/komer/recipes/search",
 							"host": [
 								"{{port}}"
 							],
 							"path": [
 								"api",
 								"komer",
-								"search_recipes"
+								"recipes",
+								"search"
 							]
 						}
 					},

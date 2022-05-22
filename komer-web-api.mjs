@@ -13,8 +13,8 @@ export default function(services) {
     const app = express.Router()
 
     // Configure CRUD routes to manage Komer 
-    app.get('/api/komer/popular_recipes', handlerWrapper(getPopularRecipes))       // Get the list of the most popular recipes
-    app.get('/api/komer/search_recipes', handlerWrapper(searchRecipes))            // Search recipes by words contained on its name
+    app.get('/api/komer/recipes/popular', handlerWrapper(getPopularRecipes))       // Get the list of the most popular recipes
+    app.get('/api/komer/recipes/search', handlerWrapper(searchRecipes))            // Search recipes by words contained on its name
     app.post('/api/komer/groups', handlerWrapper(createGroup))                     // Create group providing its name and description
     app.put('/api/komer/groups/:id', handlerWrapper(updateGroup))                  // Edit group by changing its name and description
     app.get('/api/komer/groups', handlerWrapper(getGroups))                        // List all groups
@@ -70,7 +70,7 @@ export default function(services) {
 
     async function createGroup(req, resp){
         resp.status(201)
-        return await services.createGroup(req.token, req.body.name, req.body.description)
+        return await services.createGroup(req.token, req.body.name, req.body.description, req.body.recipes)
     }
 
     async function addRecipe(req, resp){

@@ -51,7 +51,7 @@ export default function () {
 
     async function createGroup(group) {
         const newId = nextGroupId++
-        const newGroup = { id: newId, name: group.name, description: group.description, recipes:[], ownerUser: group.ownerUser }
+        const newGroup = { id: newId, name: group.name, description: group.description, recipes:group.recipes, ownerUser: group.ownerUser }
         groups.push(newGroup)
         return Promise.resolve(newGroup)
 
