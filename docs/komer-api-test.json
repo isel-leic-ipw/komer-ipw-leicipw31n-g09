@@ -1,0 +1,310 @@
+{
+	"info": {
+		"_postman_id": "897239c9-b9f7-43da-8080-c53ef47eb027",
+		"name": "Komer",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "20787746"
+	},
+	"item": [
+		{
+			"name": "web-api",
+			"item": [
+				{
+					"name": "Group",
+					"item": [
+						{
+							"name": "createGroup",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n        \"name\": \"group5\",\r\n        \"description\": \"group5 description5\",\r\n        \"recipes\":[]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{port}}/api/komer/groups",
+									"host": [
+										"{{port}}"
+									],
+									"path": [
+										"api",
+										"komer",
+										"groups"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "updateGroup",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"group3\",\r\n    \"description\": \"group3 description3\",\r\n    \"recipes\":[]\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{port}}/api/komer/groups/3",
+									"host": [
+										"{{port}}"
+									],
+									"path": [
+										"api",
+										"komer",
+										"groups",
+										"3"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getGroups",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{port}}/api/komer/groups",
+									"host": [
+										"{{port}}"
+									],
+									"path": [
+										"api",
+										"komer",
+										"groups"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "deleteGroup",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{port}}/api/komer/groups/1",
+									"host": [
+										"{{port}}"
+									],
+									"path": [
+										"api",
+										"komer",
+										"groups",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getDetailsFromGroup",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{port}}/api/komer/groups/1",
+									"host": [
+										"{{port}}"
+									],
+									"path": [
+										"api",
+										"komer",
+										"groups",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "addRecipe",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "\r\n{\r\n        \"recipeId\":645730\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{port}}/api/komer/groups/3",
+									"host": [
+										"{{port}}"
+									],
+									"path": [
+										"api",
+										"komer",
+										"groups",
+										"3"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "deleteRecipe",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{port}}/api/komer/groups/1/1",
+									"host": [
+										"{{port}}"
+									],
+									"path": [
+										"api",
+										"komer",
+										"groups",
+										"1",
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"auth": {
+						"type": "bearer",
+						"bearer": [
+							{
+								"key": "token",
+								"value": "0b115b6e-8fcd-4b66-ac26-33392dcb9340",
+								"type": "string"
+							}
+						]
+					},
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "getPopularRecipes",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"quantity\":50\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{port}}/api/komer/popular_recipes",
+							"host": [
+								"{{port}}"
+							],
+							"path": [
+								"api",
+								"komer",
+								"popular_recipes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "searchRecipes",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"quantity\":20,\r\n    \"name\":\"chicken\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{port}}/api/komer/search_recipes",
+							"host": [
+								"{{port}}"
+							],
+							"path": [
+								"api",
+								"komer",
+								"search_recipes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "createUser",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n        \"name\": \"user3\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{port}}/api/komer/users",
+							"host": [
+								"{{port}}"
+							],
+							"path": [
+								"api",
+								"komer",
+								"users"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

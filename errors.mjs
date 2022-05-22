@@ -20,7 +20,7 @@ export const errors = {
         argumentName = argumentName ? argumentName + ' ' : argumentName
         return {
             code: errorCodes.NOT_FOUND,
-            message: `${argumentName} not found` 
+            message: `${argumentName}not found` 
         }
     },
     INVALID_TOKEN: () => {
@@ -29,7 +29,6 @@ export const errors = {
             message: `Invalid Token`
         }
     },
-
     INVALID_USER: () => {
         return {
             code: errorCodes.INVALID_USER,

@@ -1,16 +1,16 @@
 openapi: 3.0.1
 info:
-  title: Komer API
-  description: This is a simple Komer API - Part 1
+  title: Komer Web-API
+  description: This is komer web-api
   contact:
-    email: komer@komer-part1.com
+    email: you@your-company.com
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   version: 1.0.0
 servers:
   - description: Localhost server for testing API
-    url: http://localhost:1984/api
+    url: http://localhost:1904/web-api
 
 tags:
 - name: groups
@@ -22,9 +22,14 @@ paths:
     post:
       tags:
       - users
-      summary: adds a user
-      description: Create new User
+      summary: creates a new user
+      description: creates a new user to the system
       operationId: createUser
+      parameters: 
+        - name: name
+        required: true
+        schema:
+          type: string
       requestBody:
         description: User to create
         content:
@@ -52,38 +57,19 @@ paths:
   /groups:
     get:
       tags:
-      - games
-      summary: get groups
-      description: By passing in the appropriate options, you can search for available
-        games
-      operationId: getGames
+      - groups
+      summary: lists all groups
+      description: lists all groups
+      operationId: getGroups
       security:
         - bearerAuth: []
       parameters:
-      - name: Authorization
+      - name: token
         in: header
-        required: false
+        required: true
         schema:
           type: string
           format: uuid
-      - name: searchString
-        in: query
-        description: pass an optional search string for looking up games with that  text
-        schema:
-          type: string
-      - name: skip
-        in: query
-        description: number of records to skip for pagination
-        schema:
-          minimum: 0
-          type: integer
-      - name: limit
-        in: query
-        description: maximum number of records to return
-        schema:
-          maximum: 50
-          minimum: 0
-          type: integer
       responses:
         200:
           description: search results matching criteria
@@ -92,7 +78,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Game'
+                  $ref: '#/components/schemas/Groups'
         400:
           description: bad input parameter
           content: 
@@ -101,52 +87,64 @@ paths:
                 $ref: '#/components/schemas/InvalidRequest'
     post:
       tags:
-      - games
-      summary: adds a game
-      description: Adds a game to the system
-      operationId: addGame
+      - groups
+      summary: creates a group
+      description: creates a group
+      operationId: createGroup
       security:
         - bearerAuth: []
       parameters:
-      - name: Authorization
+      - name: token
         in: header
         required: true
         schema:
           type: string
           format: uuid
+      - name: name
+        in: query
+        description: name of the group
+        required: true
+        schema:
+          type: string
+      - name: desc
+        in: query
+        description: description of the group
+        required: false
+        schema:
+          type: string
       requestBody:
-        description: Game to add
+        description: creates a group
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NewGame'
+              $ref: '#/components/schemas/Groups'
         required: false
       responses:
         201:
-          description: Game created
+          description: Group created
           content: {}
         400:
           description: Invalid input, object invalid
           content: {}
-      x-codegen-request-body-name: game
-  /games/{gameId}:
+      x-codegen-request-body-name: groups
+  /groups/{groupId}:
     get:
       tags:
-      - games
-      summary: Get a game given its id
-      description: Get a game given its id
-      operationId: getGameById
+      - groups
+      summary: Get details of a group given its id
+      description: Get details of a group given its id
+      operationId: getDetailsFromGroup
       security:
         - bearerAuth: []
       parameters:
-      - name: Authorization
+      - name: token
         in: header
         schema:
           type: string
           format: uuid
-      - name: gameId
+      - name: id
         in: path
-        description: ID of game that to be fetched
+        description: ID of the group that to be fetched
         required: true
         schema:
           type: integer
@@ -157,7 +155,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Game'
+                $ref: '#/components/schemas/Groups'
         400:
           description: Invalid ID supplied
           content: 
@@ -166,59 +164,77 @@ paths:
                 type: string
                 example: Invalid ID supplied
         404:
-          description: Game not found
+          description: Group not found
           content: 
             application/json:
               schema: 
                 $ref: '#/components/schemas/InvalidRequest'
-                example: Game Not found
+                example: Group Not found
     put:
       tags:
-      - games
-      summary: updates a game
-      description: Updates a Game in the system
-      operationId: updateGame
+      - groups
+      summary: updates a group
+      description: updates a group in the system
+      operationId: updateGroup
       security:
         - bearerAuth: []
       parameters:
-      - name: Authorization
+      - name: token
         in: header
         required: true
         schema:
           type: string
           format: uuid
-      - name: gameId
+      - name: id
         in: path
-        description: ID of the game to be deleted
+        description: ID of the group to be edited
         required: true
         schema:
           type: integer
+      - name: name
+        in: query
+        description: name of the group
+        required: true
+        schema:
+          type: string
+      - name: desc
+        in: query
+        description: description of the group
+        required: false
+        schema:
+          type: string
       requestBody:
-        description: Game to add
+        description: Group to edit
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Game'
+              $ref: '#/components/schemas/Groups'
         required: false
       responses:
         201:
-          description: game updated
+          description: group edited
           content: {}
         404:
-          description: Game not found
+          description: group not found
           content: {}
     delete:
       tags:
-      - games
-      summary: Delete a game by ID
-      description: Delete a game by ID
-      operationId: deleteGame
+      - groups
+      summary: Delete a group by ID
+      description: Delete a group by ID
+      operationId: deleteGroup
       security:
         - bearerAuth: []
       parameters:
-      - name: gameId
+      - name: token
+        in: header
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: id
         in: path
-        description: ID of the game to be deleted
+        description: ID of the group to be deleted
         required: true
         schema:
           type: integer
@@ -227,56 +243,182 @@ paths:
           description: Invalid ID supplied
           content: {}
         404:
-          description: Game not found
+          description: Group not found
           content: {}
-  /recipes:
+
+  /groups/{groupId}/recipes:
+    post:
+      tags:
+      - groups
+      summary: adds a recipe to a group given its id
+      description: adds a recipe to a group given its id
+      operationId: addRecipe
+      security:
+        - bearerAuth: []
+
+      parameters:
+      - name: token
+        in: header
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: id
+        in: path
+        description: ID of the group to be deleted
+        required: true
+        schema:
+          type: integer
+      - name: name
+        in: query
+        description: name of the group
+        required: true
+        schema:
+          type: string  
+      responses:
+        400:
+          description: Invalid ID supplied
+          content: {}
+        404:
+          description: Group not found
+          content: {}
+
+  /groups/{groupId}/recipes/{recipeName}:
+    delete:
+      tags:
+        - groups
+      summary: deletes a recipe (given its name) of a group given its id
+      description: deletes a recipe (given its name) of a group given its id
+      operationId: deleteRecipe
+      security:
+        - bearerAuth: []
+      parameters:
+      - name: token
+        in: header
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: id
+        in: path
+        description: ID of the group to be deleted
+        required: true
+        schema:
+          type: integer
+      - name: name
+        in: query
+        description: name of the group
+        required: true
+        schema:
+          type: string
+      responses:
+        400:
+          description: Invalid ID supplied
+          content: {}
+        404:
+          description: Group not found
+          content: {}
+
+  /popular:
+    get:
+      tags:
+        - popular
+      summary: Gets popular recipes from spoonnacular 
+      description: Gets popular recipes from spoonnacular 
+      operationId: getPopularRecipes
+      security:
+        - bearerAuth: []
+
+  /search/{recipeName}:
+    get:
+      tags:
+        - searched
+      summary: Gets a recipe with the given name
+      description: Gets a recipe with the given name
+      operationId: searchRecipes
+      security:
+        - bearerAuth: []
+      parameters:
+      - name: name
+        in: query
+        description: name of the group
+        required: true
+        schema:
+          type: string
+      responses:
+        400:
+          description: Invalid name supplied
+          content: {}
+        404:
+          description: recipe not found
+          content: {}
+
+
 components:
   securitySchemes:
     bearerAuth:            # arbitrary name for the security scheme
       type: http
       scheme: bearer
   schemas:
-    Game:
+    CreateUser: 
       required:
-      - id
-      - text
-      - userId
+        - name
       type: object
       properties:
+        id: 
+          type: integer
+          example: 1
+        name: 
+          type: string
+          example: john
+        authToken:
+          type: string
+          example: 3232-33232-43434-4343434
+    Groups:
+      required:
+      - token
+      - id
+      - name
+      type: object
+      properties:
+        token:
+          type: string
+          format: uuid
         id:
           type: integer
           example: 1
         name:
           type: string
-          example: Fifa
+          example: fifa
         description:
           type: string
           example: Fifa game description
-        userId:
-          type: integer
-    NewGame:
+    NewGroup: 
       required:
-      - text
-      - userId
-      type: object
+      - name
       properties:
+        token:
+          type: string
+          format: uuid
+        id:
+          type: integer
+          example: 1
         name:
           type: string
-          example: Fifa
+          example: fifa
         description:
           type: string
           example: Fifa game description
-        userId:
-          type: integer
-
-    CreateUser:
+    NewRecipe:
       required:
-      - userName
-      type: object
+      - recipeId
       properties:
-        userName:
+        token:
           type: string
-          example: joao
+          format: uuid
+        id:
+          type: integer
+          example: 1
     InvalidRequest:
       type: object
       properties:

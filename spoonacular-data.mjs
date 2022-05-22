@@ -4,7 +4,6 @@ import  fetch  from 'node-fetch'
 import * as dotenv from 'dotenv';
 dotenv.config();
 
-import { errors } from './errors.mjs'
 
 const RECEIPES_URL = `https://api.spoonacular.com/recipes/complexSearch?apiKey=${process.env.SPOONACULAR_API_KEY}`
 
@@ -18,13 +17,13 @@ export default function () {
         getRecipeById
     }
 
-    async function getPopularRecipes(){
-        return fetch(RECEIPES_URL+'&sort=popularity')
+    async function getPopularRecipes(quantity){
+        return fetch(RECEIPES_URL+`&number=${quantity}&sort=popularity`)
         .then(rsp => rsp.json())
     }
 
-    async function searchRecipes(name){
-        return fetch(RECEIPES_URL+`&query=${name}`)
+    async function searchRecipes(name,quantity){
+        return fetch(RECEIPES_URL+`&query=${name}&number=${quantity}`)
         .then(rsp => rsp.json())
     }
 
