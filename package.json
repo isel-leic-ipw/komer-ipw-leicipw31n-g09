@@ -1,11 +1,14 @@
 {
   "name": "Version1",
+  "type":"module",
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
+  "devDependencies": {
+    "jest": "^27.5.1"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "test": "jest"
   },
   "keywords": [],
   "author": "",
@@ -16,4 +19,5 @@
     "dotenv": "^16.0.0",
     "node-fetch": "^3.2.3"
   }
+  
 }

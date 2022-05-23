@@ -46,8 +46,11 @@ paths:
                     type: string
                     format: uuid
         400:
-          description: Invalid input, object invalid
-          content: {}
+          description: Invalid Argument
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidArgument'
       x-codegen-request-body-name: user
   /groups:
     get:
@@ -75,11 +78,23 @@ paths:
                 items:
                   $ref: '#/components/schemas/Group'
         400:
-          description: bad input parameter
+          description: Invalid Argument
           content: 
             application/json:
               schema:
-                $ref: '#/components/schemas/InvalidRequest'
+                $ref: '#/components/schemas/InvalidArgument'
+        401:
+          description: invalid token
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidToken'
+        404:
+          description: User Not Found
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserNotFound'
     post:
       tags:
       - groups
@@ -107,8 +122,23 @@ paths:
           description: Group created
           content: {}
         400:
-          description: Invalid input, object invalid
-          content: {}
+          description: Invalid Argument
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidArgument'
+        401:
+          description: invalid token
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidToken'
+        404:
+          description: User Not Found
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserNotFound'
       x-codegen-request-body-name: group
   /groups/{id}:
     get:
@@ -140,18 +170,25 @@ paths:
               schema:
                 $ref: '#/components/schemas/Group'
         400:
-          description: Invalid ID supplied
+          description: Invalid Argument
           content: 
             application/json:
-              schema: 
-                type: string
-                example: Invalid ID supplied
+              schema:
+                $ref: '#/components/schemas/InvalidArgument'
+        401:
+          description: invalid user or token
+          content: 
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/InvalidUser'
+                  - $ref: '#/components/schemas/InvalidToken'
         404:
-          description: bad input parameter
+          description: Group Not Found
           content: 
             application/json:
-              schema: 
-                $ref: '#/components/schemas/InvalidRequest'              
+              schema:
+                $ref: '#/components/schemas/GroupNotFound'            
     put:
       tags:
       - groups
@@ -184,9 +221,20 @@ paths:
         201:
           description: group updated
           content: {}
+        401:
+          description: invalid user or token
+          content: 
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/InvalidUser'
+                  - $ref: '#/components/schemas/InvalidToken'
         404:
-          description: group not found
-          content: {}
+          description: Group Not Found
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupNotFound'
     delete:
       tags:
       - groups
@@ -210,11 +258,25 @@ paths:
           type: integer
       responses:
         400:
-          description: Invalid ID supplied
-          content: {}
+          description: Invalid Argument
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidArgument'
+        401:
+          description: invalid user or token
+          content: 
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/InvalidUser'
+                  - $ref: '#/components/schemas/InvalidToken'
         404:
-          description: Group not found
-          content: {}
+          description: Group Not Found
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupNotFound'
   /groups/{id}/{recipe}:
     post:
       tags:
@@ -224,7 +286,6 @@ paths:
       operationId: addRecipe
       security:
         - bearerAuth: []
-
       parameters:
       - name: token
         in: header
@@ -246,10 +307,27 @@ paths:
           type: integer  
       responses:
         400:
-          description: Invalid ID supplied
-          content: {}
+          description: Invalid Argument
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidArgument'
+        401:
+          description: invalid user or token
+          content: 
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/InvalidUser'
+                  - $ref: '#/components/schemas/InvalidToken'
         404:
-          description: Group not found
+          description: Group Not Found
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupNotFound'
+        500:
+          description: Unknown error
           content: {}
     delete:
       tags:
@@ -280,11 +358,27 @@ paths:
           type: string
       responses:
         400:
-          description: Invalid ID supplied
-          content: {}
+          description: Invalid Argument
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidArgument'
+        401:
+          description: invalid user or token
+          content: 
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/InvalidUser'
+                  - $ref: '#/components/schemas/InvalidToken'
         404:
-          description: Group not found
-          content: {}
+          description: Group or Recipe Not Found
+          content: 
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/GroupNotFound'
+                  - $ref: '#/components/schemas/GroupRecipeNotFound'
   /recipes/popular:
     get:
       tags:
@@ -301,6 +395,10 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Recipe'
+        500:
+          description: Unknown error
+          content: {}
+        
   /recipes/search:
     get:
       tags:
@@ -317,6 +415,9 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Recipe'
+        500:
+          description: Unknown error
+          content: {}
 components:
   securitySchemes:
     bearerAuth:            # arbitrary name for the security scheme
@@ -389,9 +490,39 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Recipe'
-    InvalidRequest:
+    InvalidArgument:
       type: object
       properties:
         cause:
           type: string
-          example: "Missing required parameter"
+          example: "Invalid argument"
+    InvalidUser:
+      type: object
+      properties:
+        cause:
+          type: string
+          example: "User not valid"
+    InvalidToken:
+      type: object
+      properties:
+        cause:
+          type: string
+          example: "Token not valid"
+    GroupNotFound:
+      type: object
+      properties:
+        cause:
+          type: string
+          example: "Group not found"
+    UserNotFound:
+      type: object
+      properties:
+        cause:
+          type: string
+          example: "User not found"
+    GroupRecipeNotFound:
+      type: object
+      properties:
+        cause:
+          type: string
+          example: "Recipe not found inside chosen group"
