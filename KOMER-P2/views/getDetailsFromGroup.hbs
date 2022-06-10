@@ -1,0 +1,37 @@
+       <h1>Details from Group</h1>
+        
+            <h2>
+                Name: 
+            </h2>
+                <h4>{{g.name}}</h4>
+            
+            <h2>
+                Description: <h4>{{g.description}}</h4>
+            </h2>
+            <br>
+            {{#each g.recipes}}
+                <h4>Recipe </h4>
+                 <a href="/komer/recipes/{{id}}/getDetails">Get Details From Recipe</a>
+                    <p>
+                        <b>Name:</b> {{name}}
+                    </p>
+                    <p>
+                        <b>Description:</b> 
+                        <textarea class="form-control" rows="6">{{description}}</textarea>
+                    </p>
+            {{/each}}
+            <form method="POST" action="/komer/groups/{{g.id}}">
+                <div>
+                    Choose a popular spoonacular recipe to add to the group: 
+                    <select  name="recipeId" />
+                    <option value="">Choose a recipe</option>
+                    {{#each r}}
+                        <option value='{{id}}'>
+                            {{title}}
+                        </option>            
+                    {{/each}}
+                    </select>
+                </div>
+                <button>Add Recipe</button>
+            </form>
+            <hr>

@@ -1,0 +1,528 @@
+openapi: 3.0.1
+info:
+  title: Komer API
+  description: This is the komer API
+  contact:
+    email: you@ykomer.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+servers:
+  - description: Localhost server for testing API
+    url: http://localhost:1984/api
+
+tags:
+- name: groups
+- name: users
+- name: recipes
+
+paths:
+  /users:
+    post:
+      tags:
+      - users
+      summary: creates a new user
+      description: creates a new user in the system
+      operationId: createUser
+      requestBody:
+        description: User to create
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: false
+      responses:
+        201:
+          description: user created
+          content:
+            application/json:
+              schema:
+                required:
+                - token
+                type: object
+                properties:
+                  token:
+                    type: string
+                    format: uuid
+        400:
+          description: Invalid Argument
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidArgument'
+      x-codegen-request-body-name: user
+  /groups:
+    get:
+      tags:
+      - groups
+      summary: lists all groups
+      description: lists all groups that belong to the user who mades the request
+      operationId: getGroups
+      security:
+        - bearerAuth: []
+      parameters:
+      - name: token
+        in: header
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        200:
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Group'
+        400:
+          description: Invalid Argument
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidArgument'
+        401:
+          description: invalid token
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidToken'
+        404:
+          description: User Not Found
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserNotFound'
+    post:
+      tags:
+      - groups
+      summary: creates a group
+      description: creates a group and associates the group to the user who made the request
+      operationId: createGroup
+      security:
+        - bearerAuth: []
+      parameters:
+      - name: token
+        in: header
+        required: true
+        schema:
+          type: string
+          format: uuid    
+      requestBody:
+        description: creates a group
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewGroup'
+        required: false
+      responses:
+        201:
+          description: Group created
+          content: {}
+        400:
+          description: Invalid Argument
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidArgument'
+        401:
+          description: invalid token
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidToken'
+        404:
+          description: User Not Found
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserNotFound'
+      x-codegen-request-body-name: group
+  /groups/{id}:
+    get:
+      tags:
+      - groups
+      summary: Get details of a group given its id
+      description: Get details of a group given its id
+      operationId: getDetailsFromGroup
+      security:
+        - bearerAuth: []
+      parameters:
+      - name: token
+        in: header
+        schema:
+          type: string
+          format: uuid
+      - name: id
+        in: path
+        description: ID of the group that to be fetched
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+        400:
+          description: Invalid Argument
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidArgument'
+        401:
+          description: invalid user or token
+          content: 
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/InvalidUser'
+                  - $ref: '#/components/schemas/InvalidToken'
+        404:
+          description: Group Not Found
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupNotFound'            
+    put:
+      tags:
+      - groups
+      summary: updates a group
+      description: updates a group in the system
+      operationId: updateGroup
+      security:
+        - bearerAuth: []
+      parameters:
+      - name: token
+        in: header
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: id
+        in: path
+        description: ID of the group to be update
+        required: true
+        schema:
+          type: integer
+      requestBody:
+        description: Group to update
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Group'
+        required: false
+      responses:
+        201:
+          description: group updated
+          content: {}
+        401:
+          description: invalid user or token
+          content: 
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/InvalidUser'
+                  - $ref: '#/components/schemas/InvalidToken'
+        404:
+          description: Group Not Found
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupNotFound'
+    delete:
+      tags:
+      - groups
+      summary: Delete a group by ID
+      description: Delete a group by ID
+      operationId: deleteGroup
+      security:
+        - bearerAuth: []
+      parameters:
+      - name: token
+        in: header
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: id
+        in: path
+        description: ID of the group to be deleted
+        required: true
+        schema:
+          type: integer
+      responses:
+        400:
+          description: Invalid Argument
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidArgument'
+        401:
+          description: invalid user or token
+          content: 
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/InvalidUser'
+                  - $ref: '#/components/schemas/InvalidToken'
+        404:
+          description: Group Not Found
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupNotFound'
+  /groups/{id}/{recipe}:
+    post:
+      tags:
+      - groups
+      summary: adds a recipe to a group given its id
+      description: adds a recipe to a group given its id
+      operationId: addRecipe
+      security:
+        - bearerAuth: []
+      parameters:
+      - name: token
+        in: header
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: id
+        in: path
+        description: ID of the group to be deleted
+        required: true
+        schema:
+          type: integer
+      - name: recipe
+        in: path
+        description: id of the recipe
+        required: true
+        schema:
+          type: integer  
+      responses:
+        400:
+          description: Invalid Argument
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidArgument'
+        401:
+          description: invalid user or token
+          content: 
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/InvalidUser'
+                  - $ref: '#/components/schemas/InvalidToken'
+        404:
+          description: Group Not Found
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupNotFound'
+        500:
+          description: Unknown error
+          content: {}
+    delete:
+      tags:
+        - groups
+      summary: deletes a recipe of a group 
+      description: deletes a recipe (given its id) of a group 
+      operationId: deleteRecipe
+      security:
+        - bearerAuth: []
+      parameters:
+      - name: token
+        in: header
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: id
+        in: path
+        description: ID of the group to be deleted
+        required: true
+        schema:
+          type: integer
+      - name: recipe
+        in: path
+        description: id of the recipe
+        required: true
+        schema:
+          type: string
+      responses:
+        400:
+          description: Invalid Argument
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidArgument'
+        401:
+          description: invalid user or token
+          content: 
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/InvalidUser'
+                  - $ref: '#/components/schemas/InvalidToken'
+        404:
+          description: Group or Recipe Not Found
+          content: 
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/GroupNotFound'
+                  - $ref: '#/components/schemas/GroupRecipeNotFound'
+  /recipes/popular:
+    get:
+      tags:
+        - popular
+      summary: Gets popular recipes from spoonnacular 
+      description: Gets popular recipes from spoonnacular 
+      operationId: getPopularRecipes
+      responses:
+        200:
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Recipe'
+        500:
+          description: Unknown error
+          content: {}
+        
+  /recipes/search:
+    get:
+      tags:
+        - search
+      summary: Gets recipes with a given name
+      description: Gets recipes by words contained on its name
+      operationId: searchRecipes
+      responses:
+        200:
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Recipe'
+        500:
+          description: Unknown error
+          content: {}
+components:
+  securitySchemes:
+    bearerAuth:            # arbitrary name for the security scheme
+      type: http
+      scheme: bearer
+  schemas:
+    User: 
+      required:
+        - name
+      type: object
+      properties:
+        name: 
+          type: string
+          example: user3
+    Group:
+      required:
+      - id
+      - name
+      - description
+      - recipes
+      - ownerUser
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: group3
+        description:
+          type: string
+          example: group3 description3
+        recipes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Recipe'
+        ownerUser:
+          type: integer
+          example: 1
+    Recipe:
+      required:
+      - id
+      - name
+      - description
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: recipe1
+        description:
+          type: string
+          example: recipe1 description1
+    NewGroup: 
+      required:
+      - name
+      - description
+      - recipes
+      type: object
+      properties:
+        name:
+          type: string
+          example: group3
+        description:
+          type: string
+          example: group3 description3
+        recipes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Recipe'
+    InvalidArgument:
+      type: object
+      properties:
+        cause:
+          type: string
+          example: "Invalid argument"
+    InvalidUser:
+      type: object
+      properties:
+        cause:
+          type: string
+          example: "User not valid"
+    InvalidToken:
+      type: object
+      properties:
+        cause:
+          type: string
+          example: "Token not valid"
+    GroupNotFound:
+      type: object
+      properties:
+        cause:
+          type: string
+          example: "Group not found"
+    UserNotFound:
+      type: object
+      properties:
+        cause:
+          type: string
+          example: "User not found"
+    GroupRecipeNotFound:
+      type: object
+      properties:
+        cause:
+          type: string
+          example: "Recipe not found inside chosen group"

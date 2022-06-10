@@ -1,0 +1,15 @@
+        <h1>All groups associated to the user</h1>
+        {{#each g}}
+            <a href="/komer/groups/{{id}}">Get details from Group</a>
+            <p>
+                <b>Name : </b>
+                
+                {{name}}
+            </p>
+            <p>
+                <b>Description: </b>
+                
+                {{description}}
+            </p>
+            <hr>
+        {{/each}}

@@ -1,0 +1,15 @@
+<div>
+    Group Name: <input type="text"  value="{{groupiD}}" readonly />
+</div>
+<div>
+    Recipe ID: <input type="text"  value="{{recipeId}}" readonly />
+</div>
+
+<form method="POST" action="/komer/groups/{{groupiD}}">
+
+    <input type="text" style="display:none" name="recipeId" value="{{recipeId}}"/>
+    <button>ADD RECIPE</button>
+        
+        
+    </div>
+</form>

@@ -1,0 +1,15 @@
+<modal>
+    <form method="POST" action="/komer/groups/1">
+                <div>
+                    Choose group: 
+                    <select name="groups" />
+                    {{#each ../g}}
+                        <option value='{{id}}'>
+                            {{name}}
+                        </option>            
+                    {{/each}}
+                    </select>
+                </div>
+                <button>Choose</button>
+            </form>
+</modal>
