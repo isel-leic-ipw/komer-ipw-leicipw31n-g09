@@ -1,0 +1,31 @@
+        <h1>Details From Recipe</h1>
+        
+            <h3>ID: {{r.id}}</h3>
+               
+            <img src="{{r.image}}" />
+            <p>
+               <b>Title:</b> {{r.title}}
+            </p>
+            <p>
+                <b>Summary:</b> 
+                 <textarea class="form-control" rows="6">{{r.summary}}</textarea>
+            </p>
+            <p>
+               <b>Instructions: </b>
+               <textarea class="form-control" rows="6">{{r.instructions}}</textarea>
+            </p>
+            <p>
+               <b>URL:</b> <a href="{{r.spoonacularSourceUrl}}">{{r.spoonacularSourceUrl}}</a>
+             </p>
+             <h3>Ingredients</h3>
+             <ul class="list-group">
+               {{#each r.extendedIngredients }}
+                  
+                  <li class="list-group-item">{{aisle}} - {{amount}}</li>
+                  
+             {{/each}}
+             </ul>
+            
+            
+            <hr>
+        

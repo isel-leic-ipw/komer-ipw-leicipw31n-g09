@@ -1,0 +1,16 @@
+<form method="GET" action="/komer/groups/addRecipeToChosenGroup">
+    <div>
+        
+        <select name="groupId" />
+            <option value="">Choose a group</option>
+            {{#each g}}
+                <option value='{{id}}'>
+                    {{name}}
+                </option>            
+            {{/each}}
+        </select>
+        <br>
+            <input style="display:none"  name="recipeId" value ="{{recipe}}" >
+            <button>Choose Group</button>
+    </div>
+</form>

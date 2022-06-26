@@ -1,0 +1,16 @@
+        <h1>Search Recipes by name</h1>
+        {{#each r}}
+            <a href="/komer/recipes/{{id}}/getDetails">{{id}}</a>
+            <p>
+                {{title}}
+            </p>
+            <img src="{{image}}" />
+            <br>
+            <div class="row">                
+                    <form method="get" action="/komer/groups/chooseGroup">
+                        <input style="display:none"  name="recipeId" value ="{{id}}" >
+                        <button>Add Recipe</button>
+                    </form>
+            </div>
+             <hr>
+        {{/each}}

@@ -1,0 +1,21 @@
+
+<form method="POST" action="/komer/groups">
+    <div>
+        Group Name: <input type="text" name="name"/>
+    </div>
+    <div>
+        Group Description: <input type="text" name="description"/>
+    </div>
+    <div>
+        Choose a popular spoonacular recipe to add to the group (Optional): 
+        <select  name="recipes" />
+        <option value="">Choose a recipe</option>
+        {{#each r}}
+            <option value='{{id}}'>
+                {{title}}
+            </option>            
+        {{/each}}
+        </select>
+    </div>
+    <input type="submit">
+</form>
