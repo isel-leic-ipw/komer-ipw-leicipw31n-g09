@@ -1,4 +1,4 @@
-import {get, post, del} from './fetch-wrapper.mjs'
+import {get, post, del,put} from './fetch-wrapper.mjs'
 import uriManager from './uri-manager.mjs'
 
 import crypto from 'crypto'
@@ -94,7 +94,7 @@ export default function () {
 
     async function updateGroup(group) {
       const updatedGroup = Object.assign(group)
-      return post(URI_MANAGER_GROUPS.get(group.id), updatedGroup)
+      return put(URI_MANAGER_GROUPS.get(group.id), updatedGroup)
             .then( () => {  return updatedGroup })
     }
 
